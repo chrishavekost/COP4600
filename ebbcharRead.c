@@ -42,8 +42,8 @@ extern static DEFINE_MUTEX(ebbchar_mutex); // Declares a mutex. 1 = unlocked, 0 
 // the driver will need to initialize itself
 static int __init ebbchar_init(void)
 {
+	mutex_init(&ebbchar_mutex); // Initalize mutex at runtime with the reader module.
    printk(KERN_INFO "EBBChar: Initializing the EBBChar LKM\n");
-   mutex_init(&ebbchar_mutex); // Initalize mutex at runtime with the reader module.
 
    // obtaining a new major device number
    mdNumber = register_chrdev(0, DEVICE_NAME, &fops);
@@ -101,6 +101,7 @@ static int dev_open(struct inode *inodep, struct file *filep)
 		printk(KERN_ALERT "EBBChar: Device currently being used by another process");
 		return -EBUSY;
 	}
+	
    nOpens++;
 
    // report using printk each time its character device is opened
@@ -131,7 +132,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 static int dev_release(struct inode *inodep, struct file *filep)
 {
 	mutex_unlock(&ebbchar_mutex); // Release mutex so that the writer module can use it.
-	
+
    // report using printk each time its character device is closed
    printk(KERN_INFO "EBBChar: Device successfully closed\n");
    return 0;

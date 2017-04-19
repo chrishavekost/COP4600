@@ -39,6 +39,7 @@ static struct file_operations fops =
 // the driver will need to initialize itself
 static int __init ebbchar_init(void)
 {
+   mutex_init(&ebbchar_mutex); // Initalize mutex at runtime with the reader module.
    printk(KERN_INFO "EBBChar: Initializing the EBBChar LKM\n");
 
    // obtaining a new major device number
@@ -91,6 +92,13 @@ static void __exit ebbchar_exit(void)
 // open the device
 static int dev_open(struct inode *inodep, struct file *filep)
 {
+   if(!mutex_trylock(&ebbchar_mutex))
+   {
+      // Tries to acquire the mutex, returns 1 if successful, 0 if it is already in use.
+      printk(KERN_ALERT "EBBChar: Device currently being used by another process");
+      return -EBUSY;
+   }
+
    nOpens++;
 
    // report using printk each time its character device is opened
@@ -111,6 +119,8 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
 // close the device
 static int dev_release(struct inode *inodep, struct file *filep)
 {
+   mutex_unlock(&ebbchar_mutex); // Release mutex so that the writer module can use it.
+   
    // report using printk each time its character device is closed
    printk(KERN_INFO "EBBChar: Device successfully closed\n");
    return 0;
