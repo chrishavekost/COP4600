@@ -4,7 +4,7 @@
 #include <linux/kernel.h>         
 #include <linux/fs.h>             
 #include <asm/uaccess.h>          
-#define  DEVICE_NAME "ebbchar"    
+#define  DEVICE_NAME "ebbcharWrite"    
 #define  CLASS_NAME  "ebb"        
 
 // Credit to Derek Molloy at derekmolloy.ie for a large portion of this code. 
