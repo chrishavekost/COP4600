@@ -4,7 +4,10 @@
 #include <linux/kernel.h>         
 #include <linux/fs.h>             
 #include <asm/uaccess.h> 
+
 #include <linux/mutex.h>
+#include "ebbcharRead.h"
+
 #define  DEVICE_NAME "ebbcharWrite"    
 #define  CLASS_NAME  "ebb"        
 

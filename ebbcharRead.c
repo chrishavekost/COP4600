@@ -3,8 +3,10 @@
 #include <linux/device.h>         
 #include <linux/kernel.h>         
 #include <linux/fs.h>             
-#include <asm/uaccess.h>   
+#include <asm/uaccess.h>
+
 #include <linux/mutex.h>
+
 #define  DEVICE_NAME "ebbcharRead"    
 #define  CLASS_NAME  "ebb"        
 
@@ -16,8 +18,8 @@ MODULE_DESCRIPTION("COP4600 Programming Assignment 3");
 MODULE_VERSION("1.0");         
 
 static int    mdNumber;                   // major device number
-static char   message[1024] = {0}; 			// store bytes written to it up to a constant buffer size (at least 1KB)          
-static short  messageLength;              
+extern static char   message[1024] = {0}; 			// store bytes written to it up to a constant buffer size (at least 1KB)          
+extern static short  messageLength;              
 static int    nOpens = 0;					   // stores the number of times the device opens
 static struct class*  charClass  = NULL;  // class pointer
 static struct device* charDev = NULL; 		// device pointer
@@ -33,10 +35,15 @@ static struct file_operations fops =
    .release = dev_release,
 };
 
+extern static DEFINE_MUTEX(ebbchar_mutex); // Declares a mutex. 1 = unlocked, 0 = locked
+
+
+
 // the driver will need to initialize itself
 static int __init ebbchar_init(void)
 {
    printk(KERN_INFO "EBBChar: Initializing the EBBChar LKM\n");
+   mutex_init(&ebbchar_mutex); // Initalize mutex at runtime with the reader module.
 
    // obtaining a new major device number
    mdNumber = register_chrdev(0, DEVICE_NAME, &fops);
@@ -88,6 +95,12 @@ static void __exit ebbchar_exit(void)
 // open the device
 static int dev_open(struct inode *inodep, struct file *filep)
 {
+	if(!mutex_trylock(&ebbchar_mutex))
+	{
+		// Tries to acquire the mutex, returns 1 if successful, 0 if it is already in use.
+		printk(KERN_ALERT "EBBChar: Device currently being used by another process");
+		return -EBUSY;
+	}
    nOpens++;
 
    // report using printk each time its character device is opened
@@ -117,6 +130,8 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 // close the device
 static int dev_release(struct inode *inodep, struct file *filep)
 {
+	mutex_unlock(&ebbchar_mutex); // Release mutex so that the writer module can use it.
+	
    // report using printk each time its character device is closed
    printk(KERN_INFO "EBBChar: Device successfully closed\n");
    return 0;
