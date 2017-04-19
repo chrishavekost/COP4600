@@ -6,10 +6,10 @@
 #include <asm/uaccess.h> 
 
 #include <linux/mutex.h>
-#include "ebbcharRead.h"
+//#include "ebbcharRead"
 
 #define  DEVICE_NAME "ebbcharWrite"    
-#define  CLASS_NAME  "ebb"        
+#define  CLASS_NAME  "ebbWrite"        
 
 // Credit to Derek Molloy at derekmolloy.ie for a large portion of this code. 
 
@@ -19,8 +19,8 @@ MODULE_DESCRIPTION("COP4600 Programming Assignment 3");
 MODULE_VERSION("1.0");         
 
 static int    mdNumber;                   // major device number
-static char   message[1024] = {0}; 			// store bytes written to it up to a constant buffer size (at least 1KB)          
-static short  messageLength;              
+extern char   message[1024] = {0}; 			// store bytes written to it up to a constant buffer size (at least 1KB)          
+extern short  messageLength;              
 static int    nOpens = 0;					   // stores the number of times the device opens
 static struct class*  charClass  = NULL;  // class pointer
 static struct device* charDev = NULL; 		// device pointer
@@ -28,6 +28,8 @@ static struct device* charDev = NULL; 		// device pointer
 static int     dev_open(struct inode *, struct file *);
 static int     dev_release(struct inode *, struct file *);
 static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
+
+DEFINE_MUTEX(ebbchar_mutex);
 
 static struct file_operations fops =
 {

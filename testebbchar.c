@@ -11,7 +11,7 @@ static char sBuffer[BUFFER];   // stores the string
 int main()
 {
 
-   int ret, thisFile;
+   int ret, thisFileRead, thisFileWrite;
    char sendString[BUFFER];
    printf("Starting device test code example...\n");
    //thisFile = open("/dev/ebbchar", O_RDWR);             

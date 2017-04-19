@@ -8,7 +8,7 @@
 #include <linux/mutex.h>
 
 #define  DEVICE_NAME "ebbcharRead"    
-#define  CLASS_NAME  "ebb"        
+#define  CLASS_NAME  "ebbRead"        
 
 // Credit to Derek Molloy at derekmolloy.ie for a large portion of this code. 
 
@@ -18,9 +18,12 @@ MODULE_DESCRIPTION("COP4600 Programming Assignment 3");
 MODULE_VERSION("1.0");         
 
 static int    mdNumber;                   // major device number
-extern static char   message[1024] = {0}; 			// store bytes written to it up to a constant buffer size (at least 1KB)          
-extern static short  messageLength;              
-static int    nOpens = 0;					   // stores the number of times the device opens
+static char   message[1024] = {0}; 
+EXPORT_SYMBOL(message);
+/* store bytes written to it up to a constant buffer size (at least 1KB)*/
+static short  messageLength;   
+EXPORT_SYMBOL(messageLength);           
+static int    nOpens = 0;	// stores the number of times the device opens
 static struct class*  charClass  = NULL;  // class pointer
 static struct device* charDev = NULL; 		// device pointer
 
@@ -35,7 +38,8 @@ static struct file_operations fops =
    .release = dev_release,
 };
 
-extern static DEFINE_MUTEX(ebbchar_mutex); // Declares a mutex. 1 = unlocked, 0 = locked
+extern DEFINE_MUTEX(ebbchar_mutex);
+/* Declares a mutex. 1 = unlocked, 0 = locked*/
 
 
 

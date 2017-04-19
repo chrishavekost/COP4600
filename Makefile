@@ -1,4 +1,5 @@
-obj-m+= ebbcharRead.o ebbcharWrite.o
+obj-m += ebbcharRead.o
+obj-m += ebbcharWrite.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build/ M=$(PWD) modules
