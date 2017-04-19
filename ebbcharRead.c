@@ -3,7 +3,8 @@
 #include <linux/device.h>         
 #include <linux/kernel.h>         
 #include <linux/fs.h>             
-#include <asm/uaccess.h>          
+#include <asm/uaccess.h>   
+#include <linux/mutex.h>
 #define  DEVICE_NAME "ebbcharRead"    
 #define  CLASS_NAME  "ebb"        
 
