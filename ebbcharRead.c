@@ -11,7 +11,7 @@
 
 MODULE_LICENSE("GPL");            
 MODULE_AUTHOR("Freeman, Havekost, Pantino");    
-MODULE_DESCRIPTION("COP4600 Programming Assignment 2");  
+MODULE_DESCRIPTION("COP4600 Programming Assignment 3");  
 MODULE_VERSION("1.0");         
 
 static int    mdNumber;                   // major device number
